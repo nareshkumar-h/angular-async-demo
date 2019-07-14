@@ -1,27 +1,69 @@
-# AngularAsyncDemo
+# Async Pipe
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.4.
+#### ProductService.ts
+```
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 
-## Development server
+@Injectable({
+  providedIn: 'root'
+})
+export class ProductService {
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+  constructor() { }
 
-## Code scaffolding
+  list():Observable<any> {
+    var products = [{ "id": 1, "name": "MAC", "price": 1000, "category": "Laptop" },
+    { "id": 2, "name": "Lenova", "price": 500, "category": "Laptop" },
+    { "id": 3, "name": "iPhone", "price": 500, "category": "Mobile" }];
+    return of(products);
+  }
+}
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+#### app.component.ts
+```
+import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
 
-## Build
+import { of } from 'rxjs';
+import { ProductService } from './product.service';
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'angular-async-demo';
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+  products$:Observable<any> ;
 
-## Running unit tests
+  constructor(private productService:ProductService){
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+  }
 
-## Running end-to-end tests
+  ngOnInit() {
+    this.listProducts();
+  }
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+  listProducts() {
+    this.products$ = this.productService.list();
+  }
 
-## Further help
+}
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+#### app.component.html
+```
+
+<h3>Product List( Using Async Pipe)</h3>
+<table border="1">
+  <thead><tr><th>Sno</th><th>Product Name</th><th>Price</th><th>Category</th></tr></thead>
+  <tbody *ngFor="let p of products$ | async">
+      <tr><td>{{p.id}}</td><td>{{p.name}}</td><td>{{p.price}}</td>
+        <td>{{p.category}}</td>
+      </tr>
+ </tbody>
+</table>
+```
+
