@@ -38,8 +38,6 @@ export class AppComponent {
 
   products$:Observable<any> ;
 
-  selectedCategory: string;
-
   constructor(private productService:ProductService){
 
   }
